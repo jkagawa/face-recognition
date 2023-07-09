@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import './App.css';
-import ImageSearchForm from "./Components/ImageSearchForm/ImageSearchForm";
-import FaceDetect from "./Components/FaceDetect/FaceDetect";
+import ImageSearchForm from "./Components/ImageSearchForm";
+import FaceDetect from "./Components/FaceDetect";
 // import Clarifai from "clarifai";
 
 function App() {
