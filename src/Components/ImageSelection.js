@@ -16,17 +16,17 @@ export default function ImageSelection({ setInputValue, onSubmit }) {
   return (
     <div className="mx-4 my-4">
         <div className="flex justify-center">
-          <div className="selection-area flex flex-col justify-center p-2 rounded-lg shadow-2xl">
-            <div className='text-white'>Try one of the images below</div>
+          <div className="selection-area flex flex-col justify-center px-2 pb-6 rounded-lg shadow-2xl">
+            <div className='text-white py-4'>Try one of the images below</div>
             <div className='flex flex-row'>
                 {
                     Object.entries(images).map(([key, value]) => 
                         <div
-                            className='w-1/3 rounded cursor-pointer flex justify-center align-middle'
+                            className='w-1/3 cursor-pointer flex justify-center align-middle'
                             onClick={() => selectImage(value)}
                             key={key}
                         >
-                            <img src={value} className='selection-img'/>
+                            <img src={value} className='selection-img rounded-lg'/>
                         </div>
                     )
                 }
