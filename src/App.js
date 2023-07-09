@@ -10,7 +10,7 @@ function App() {
   const [box, setBox] = useState({});
 
   useEffect(() => {
-    console.log('Current input value:', inputValue);
+    // console.log('Current input value:', inputValue);
   }, [inputValue])
 
   // set state for our input
@@ -19,17 +19,17 @@ function App() {
   };
 
   // Perform a function when submitting with onSubmit
-  const onSubmit = () => {
+  const onSubmit = (value) => {
+      // Clear box dimensions
+      setBox({})
       // set imageUrl state
-      setImageURL(inputValue);
-
+      setImageURL(value);
       
       const token = process.env.REACT_APP_TOKEN;
       const USER_ID = 'clarifai';
       const APP_ID = 'main';
       const MODEL_ID = 'face-detection';
       const MODEL_VERSION_ID = '6dc7e46bc9124c5c8824be4822abe105';
-      console.log(token);
 
       const raw = JSON.stringify({
         "user_app_id": {
@@ -40,7 +40,7 @@ function App() {
             {
                 "data": {
                     "image": {
-                        "url": imageURL
+                        "url": value
                     }
                 }
             }
@@ -59,8 +59,6 @@ function App() {
       fetch(`https://api.clarifai.com/v2/models/`+MODEL_ID+`/versions/`+MODEL_VERSION_ID+`/outputs`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(result);
-        console.log(result.outputs[0].data.regions[0].region_info.bounding_box);
         calculateFaceLocation(result);
       })
       .catch(error => console.log('error', error));
@@ -88,6 +86,8 @@ function App() {
         />
         <ImageSelection 
           setInputValue={setInputValue}
+          onSubmit={onSubmit}
+          inputValue={inputValue}
         />
         <FaceDetect 
           imageURL={imageURL}

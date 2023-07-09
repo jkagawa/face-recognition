@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function ImageSelection({ setInputValue }) {
+export default function ImageSelection({ setInputValue, onSubmit }) {
 
     const images = {
         1: "https://images.unsplash.com/photo-1688619101864-1256eadb1740?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80",
@@ -11,6 +11,7 @@ export default function ImageSelection({ setInputValue }) {
 
     const selectImage = (value) => {
         setInputValue(value);
+        onSubmit(value);
     }
   return (
     <div className="mx-4 my-4">
