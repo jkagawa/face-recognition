@@ -56,12 +56,20 @@ function App() {
         body: raw
       };
  
-      fetch(`https://api.clarifai.com/v2/models/`+MODEL_ID+`/versions/`+MODEL_VERSION_ID+`/outputs`, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        calculateFaceLocation(result);
-      })
-      .catch(error => console.log('error', error));
+      if(value) {
+        fetch(`https://api.clarifai.com/v2/models/`+MODEL_ID+`/versions/`+MODEL_VERSION_ID+`/outputs`, requestOptions)
+        .then(response => response.json())
+        .then(result => {
+          calculateFaceLocation(result);
+        })
+        .catch(error => {
+            console.log('error', error);
+            alert("There was an error processing the image URL");
+        });
+      } else {
+        alert("Please insert the URL of an image");
+      }
+      
   };
 
   const calculateFaceLocation = (data) => {

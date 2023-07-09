@@ -11,9 +11,10 @@ const ImageSearchForm = ({ onInputChange, onSubmit, inputValue }) => {
                 type="text" 
                 onChange={onInputChange}
                 value={inputValue}
+                placeholder='Image URL'
             />
             <button 
-                className="w-1/3 md:w-1/4 text-xl link px-4 py-2 dib text-white bg-[#357EDD] hover:scale-110"
+                className="w-1/3 md:w-1/4 text-xl link px-4 py-2 dib text-white bg-[royalblue] hover:scale-110 cursor-pointer"
                 onClick={() => onSubmit(inputValue)}
             >
               Detect
