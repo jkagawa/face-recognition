@@ -26,7 +26,7 @@ export default function ImageSelection({ setInputValue, onSubmit }) {
                             onClick={() => selectImage(value)}
                             key={key}
                         >
-                            <img src={value} className='selection-img rounded-lg'/>
+                            <img src={value} className='selection-img rounded-lg' alt=""/>
                         </div>
                     )
                 }
