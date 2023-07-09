@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import ImageSearchForm from "./Components/ImageSearchForm";
 import FaceDetect from "./Components/FaceDetect";
+import ImageSelection from './Components/ImageSelection';
 // import Clarifai from "clarifai";
 
 function App() {
@@ -9,7 +10,7 @@ function App() {
   const [box, setBox] = useState({});
 
   useEffect(() => {
-    console.log(inputValue);
+    console.log('Current input value:', inputValue);
   }, [inputValue])
 
   // set state for our input
@@ -83,6 +84,10 @@ function App() {
         <ImageSearchForm
           onInputChange={onInputChange}
           onSubmit={onSubmit}
+          inputValue={inputValue}
+        />
+        <ImageSelection 
+          setInputValue={setInputValue}
         />
         <FaceDetect 
           imageURL={imageURL}

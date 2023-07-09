@@ -36,6 +36,15 @@ code {
   background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);
 }
 
+.selection-area {
+  width: 700px;
+  background: #485563;
+}
+
+.selection-img {
+  height: 200px;
+}
+
 .App {
   text-align: center;
 }
