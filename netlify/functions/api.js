@@ -59,6 +59,10 @@ app.get('/api/clarifai', (req, res) => {
 
 });
 
+app.get('/api/test', (req, res) => {
+    res.send("Test is successful!");
+});
+
 app.listen(port, () => {
     console.log(`Express API listening at http://localhost:${port}`);
 });
