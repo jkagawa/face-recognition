@@ -2,53 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 body {
   margin: 0;
-  font-family: Montserrat, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
-  -Moz-osx-font-smoothing: grayscale;
-  background: #485563; /* fallback for old browsers */
-  background: linear-gradient(
-    to right,
-    #29323c,
-    #485563
-  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  -moz-osx-font-smoothing: grayscale;
+  background: #0f0c29;
+  background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  min-height: 100vh;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .bounding-box {
   position: absolute;
-  box-shadow: 0 0 0 3px #fff inset;
+  box-shadow: 0 0 0 2px #a78bfa inset, 0 0 12px rgba(167, 139, 250, 0.5);
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   cursor: pointer;
-}
-
-.form {
-  width: 700px;
-  background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);
-}
-
-.selection-area {
-  width: 700px;
-  background: #485563;
+  border-radius: 2px;
 }
 
 .selection-img {
-  height: 200px;
+  height: 180px;
+  object-fit: cover;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.selection-img:hover {
+  transform: scale(1.04);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .App {
   text-align: center;
-}
-.center {
-  display: flex;
-  justify-content: center;
-}
-
-.link {
-  text-decoration: none;
-  transition: color .15s ease-in;
 }

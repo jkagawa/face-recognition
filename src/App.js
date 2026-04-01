@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import ImageSearchForm from "./Components/ImageSearchForm";
 import FaceDetect from "./Components/FaceDetect";
 import ImageSelection from './Components/ImageSelection';
-// import Clarifai from "clarifai";
 
 function App() {
   const [inputValue, setInputValue] = useState('');
@@ -13,18 +12,14 @@ function App() {
     // console.log('Current input value:', inputValue);
   }, [inputValue])
 
-  // set state for our input
   const onInputChange = (event) => {
     setInputValue(event.target.value);
   };
 
-  // Perform a function when submitting with onSubmit
   const onSubmit = (value) => {
-      // Clear box dimensions
       setBox({})
-      // set imageUrl state
       setImageURL(value);
- 
+
       if(value) {
         fetch(`/api/clarifai?image_url=${value}`)
         .then(response => response.json())
@@ -33,7 +28,7 @@ function App() {
       } else {
         alert("Please insert the URL of an image");
       }
-      
+
   };
 
   const calculateFaceLocation = (data) => {
@@ -54,21 +49,25 @@ function App() {
   }
 
   return (
-    <div className="App">
-        <ImageSearchForm
-          onInputChange={onInputChange}
-          onSubmit={onSubmit}
-          inputValue={inputValue}
-        />
-        <ImageSelection 
-          setInputValue={setInputValue}
-          onSubmit={onSubmit}
-          inputValue={inputValue}
-        />
-        <FaceDetect 
-          imageURL={imageURL}
-          box={box}
-        />
+    <div className="App min-h-screen">
+      <header className="pt-14 pb-2">
+        <h1 className="text-4xl font-bold text-white tracking-tight">Face Detection</h1>
+        <p className="text-white/50 mt-2 text-sm font-light">Paste an image URL or pick a sample below</p>
+      </header>
+      <ImageSearchForm
+        onInputChange={onInputChange}
+        onSubmit={onSubmit}
+        inputValue={inputValue}
+      />
+      <ImageSelection
+        setInputValue={setInputValue}
+        onSubmit={onSubmit}
+        inputValue={inputValue}
+      />
+      <FaceDetect
+        imageURL={imageURL}
+        box={box}
+      />
     </div>
   );
 }
