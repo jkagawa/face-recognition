@@ -37,6 +37,10 @@ function App() {
   };
 
   const calculateFaceLocation = (data) => {
+    if (!data?.outputs?.[0]?.data?.regions?.[0]?.region_info?.bounding_box) {
+      alert("Unable to perform face detection at this time. Please try again later.");
+      return;
+    }
     const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
     const image = document.getElementById("inputimage");
     const width = Number(image.width);

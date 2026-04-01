@@ -1,4 +1,4 @@
-import serverless from 'serverless-http';
+const serverless = require('serverless-http');
 
 require('dotenv').config();
 const express = require('express');
@@ -16,7 +16,8 @@ app.get('/api/clarifai', (req, res) => {
     const USER_ID = 'clarifai';
     const APP_ID = 'main';
     const MODEL_ID = 'face-detection';
-    const MODEL_VERSION_ID = '6dc7e46bc9124c5c8824be4822abe105';
+    // const MODEL_VERSION_ID = '6dc7e46bc9124c5c8824be4822abe105';
+    const MODEL_VERSION_ID = '45fb9a671625463fa646c3523a3087d5';
 
     const raw = JSON.stringify({
         "user_app_id": {
@@ -67,4 +68,4 @@ app.listen(port, () => {
     console.log(`Express API listening at http://localhost:${port}`);
 });
 
-export const handler = serverless(app);
+exports.handler = serverless(app);
