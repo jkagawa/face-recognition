@@ -15,7 +15,7 @@ export default function ImageSelection({ setInputValue, onSubmit }) {
         <div className="mx-4 my-4">
             <div className="flex justify-center">
                 <div className="glass flex flex-col items-center px-4 pb-5 pt-4 rounded-2xl w-full max-w-xl">
-                    <p className="text-white/40 text-xs font-medium uppercase tracking-widest mb-4">Pick a sample image below</p>
+                    <p className="text-white/40 text-xs font-medium uppercase tracking-widest mb-4">Pick a sample below</p>
                     <div className="flex flex-row gap-3 w-full">
                         {Object.entries(images).map(([key, value]) =>
                             <div
