@@ -3,7 +3,7 @@ import React from 'react'
 const FaceDetect = ({ imageURL, box }) => {
   return (
     <div className="flex justify-center">
-      <div className="absolute mt-4">
+      <div className="relative mt-4 mb-4 inline-block">
         <img id="inputimage" alt="" src={imageURL} width="500px" heigh="auto" />
         <div
           className="bounding-box"
