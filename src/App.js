@@ -28,7 +28,30 @@ function App() {
       } else {
         alert("Please insert the URL of an image");
       }
+  };
 
+  const onImageUpload = (file) => {
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) {
+        alert("Please upload an image under 2MB.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataURL = e.target.result;
+        const base64 = dataURL.split(',')[1];
+        setBox({});
+        setImageURL(dataURL);
+        fetch('/api/clarifai/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image_base64: base64 })
+        })
+        .then(response => response.json())
+        .then(data => calculateFaceLocation(data))
+        .catch(error => console.error('Error:', error));
+      };
+      reader.readAsDataURL(file);
   };
 
   const calculateFaceLocation = (data) => {
@@ -52,12 +75,13 @@ function App() {
     <div className="App min-h-screen">
       <header className="pt-14 pb-2">
         <h1 className="text-4xl font-bold text-white tracking-tight">Face Detection</h1>
-        <p className="text-white/50 mt-2 text-sm font-light">Paste an image URL or pick a sample below</p>
+        <p className="text-white/50 mt-2 text-sm font-light">Paste an image URL or upload an image from your device</p>
       </header>
       <ImageSearchForm
         onInputChange={onInputChange}
         onSubmit={onSubmit}
         inputValue={inputValue}
+        onImageUpload={onImageUpload}
       />
       <ImageSelection
         setInputValue={setInputValue}
