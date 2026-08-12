@@ -4,7 +4,9 @@ export default function ImageSelection({ setInputValue, onSubmit }) {
         1: "https://images.unsplash.com/photo-1630432531421-d5bef05c116f?auto=format&fit=crop&w=687&q=80",
         2: "https://images.unsplash.com/photo-1698656222826-1306d84ec767?auto=format&fit=crop&w=687&q=80",
         3: "https://images.unsplash.com/photo-1688619101864-1256eadb1740?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80",
-        4: "https://images.unsplash.com/photo-1596902852634-9dc8f029bb1a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80"
+        4: "https://images.unsplash.com/photo-1596902852634-9dc8f029bb1a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80",
+        5: "https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=687&q=80",
+        6: "https://images.unsplash.com/photo-1623721122680-6601645477ec?auto=format&fit=crop&w=687&q=80"
     }
 
     const selectImage = (value) => {
@@ -17,10 +19,10 @@ export default function ImageSelection({ setInputValue, onSubmit }) {
             <div className="flex justify-center">
                 <div className="glass flex flex-col items-center px-4 pb-5 pt-4 rounded-2xl w-full max-w-xl">
                     <p className="text-white/40 text-xs font-medium uppercase tracking-widest mb-4">Pick a sample below</p>
-                    <div className="flex flex-row gap-3 w-full">
+                    <div className="grid grid-cols-3 gap-3 w-full">
                         {Object.entries(images).map(([key, value]) =>
                             <div
-                                className="flex-1 cursor-pointer overflow-hidden rounded-xl"
+                                className="cursor-pointer overflow-hidden rounded-xl"
                                 onClick={() => selectImage(value)}
                                 key={key}
                             >
