@@ -1,9 +1,10 @@
 export default function ImageSelection({ setInputValue, onSubmit }) {
 
     const images = {
-        1: "https://images.unsplash.com/photo-1688619101864-1256eadb1740?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80",
-        2: "https://images.unsplash.com/photo-1596902852634-9dc8f029bb1a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80",
-        3: "https://images.unsplash.com/photo-1501450626433-39bbf117090e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80"
+        1: "https://images.unsplash.com/photo-1630432531421-d5bef05c116f?auto=format&fit=crop&w=687&q=80",
+        2: "https://images.unsplash.com/photo-1698656222826-1306d84ec767?auto=format&fit=crop&w=687&q=80",
+        3: "https://images.unsplash.com/photo-1688619101864-1256eadb1740?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80",
+        4: "https://images.unsplash.com/photo-1596902852634-9dc8f029bb1a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80"
     }
 
     const selectImage = (value) => {

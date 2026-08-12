@@ -93,8 +93,13 @@ app.get('/api/test', (req, res) => {
     res.send("Test is successful!");
 });
 
-app.listen(port, () => {
-    console.log(`Express API listening at http://localhost:${port}`);
-});
+// Only bind a port when this file is run directly (`npm run dev`). On Netlify
+// the module is imported by the serverless runtime, where listening on a port
+// does nothing useful and runs on every cold start.
+if (require.main === module) {
+    app.listen(port, () => {
+        console.log(`Express API listening at http://localhost:${port}`);
+    });
+}
 
 exports.handler = serverless(app);

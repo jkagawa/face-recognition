@@ -1,8 +1,32 @@
+[build]
+  command = "npm run build"
+  publish = "build"
+  functions = "netlify/functions"
+
+[build.environment]
+  # Pin the toolchain so CI matches local; CRA 5 also warns/fails on newer
+  # OpenSSL defaults without this being explicit.
+  NODE_VERSION = "22"
+  # The prebuilt face-api bundle ships no sourcemaps, which makes CRA's
+  # source-map-loader noisy and slows the build for no benefit.
+  GENERATE_SOURCEMAP = "false"
+  # CRA treats warnings as errors in CI, and the face-api bundle emits two
+  # unavoidable "critical dependency" warnings.
+  CI = "false"
+
 [functions]
   external_node_modules = ["express"]
   node_bundler = "esbuild"
+
 [[redirects]]
   force = true
   from = "/api/*"
   status = 200
   to = "/.netlify/functions/api/:splat"
+
+# Model weights are content-addressed by filename and never change in place,
+# so let browsers keep them instead of re-downloading 5.6MB each visit.
+[[headers]]
+  for = "/models/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
