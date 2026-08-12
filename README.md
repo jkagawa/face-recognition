@@ -1,6 +1,28 @@
-# Getting Started with Create React App
+# Face Detection
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Paste an image URL, upload a photo, or click one of the samples, and the app draws a box around every face it finds.
+
+## How detection works
+
+Detection runs **entirely in the browser** using [@vladmandic/face-api](https://github.com/vladmandic/face-api), a maintained fork of `face-api.js` on modern TensorFlow.js. There's no API key and no per-request cost. (This replaced Clarifai, which shut down its service.)
+
+The model weights live in [`public/models/`](public/models) and are committed to the repo — they're copied from `node_modules/@vladmandic/face-api/model/` and served as static files, so nothing extra has to run at build time. Only the detector is used; the library also ships landmark, expression, and recognition models, which this app doesn't need.
+
+### Why SSD MobileNet v1 and not TinyFaceDetector
+
+The obvious choice is `tinyFaceDetector` — 193KB against 5.6MB. It was measured against the three sample images on the home page and **found zero faces in all of them**, at input sizes 416/512/608 and score thresholds down to 0.2. Those photos have small, tilted, hat-shaded faces, which is exactly where the tiny model gives up. `ssdMobilenetv1` finds them at 0.91–0.96 confidence in well under 100ms per image.
+
+The weights are a one-time cached download, so the size buys a detector that actually works on real photos. If you ever swap back, change both the net and the options in [`src/lib/faceDetection.js`](src/lib/faceDetection.js) and copy the matching weight files into `public/models/`.
+
+Known limitation: faces in **full profile** (looking away from the camera) are not detected — this is a limitation of the model, not the wiring.
+
+## Why there's still a backend
+
+To detect faces, the browser has to read the image's pixels off a canvas, and it only allows that when the image host sends CORS headers. Many hosts don't.
+
+So [`netlify/functions/api.js`](netlify/functions/api.js) exposes `GET /api/proxy?url=…`, which fetches the image server-side and returns it as a data URI. The client ([`src/lib/loadImage.js`](src/lib/loadImage.js)) tries loading the URL directly first and only falls back to the proxy when that fails — so CORS-friendly hosts cost no round trip. Uploaded files never touch the network at all.
+
+Run `npm run dev` to start the React dev server and the Express API together; requests to `/api/*` are proxied to port 3001 in development, and routed by `netlify.toml` in production.
 
 ## Available Scripts
 

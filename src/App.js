@@ -1,75 +1,130 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import ImageSearchForm from "./Components/ImageSearchForm";
 import FaceDetect from "./Components/FaceDetect";
 import ImageSelection from './Components/ImageSelection';
+import Message from './Components/Message';
+import { loadModels, detectFaces, toBoxes } from './lib/faceDetection';
+import { resolveImageSrc } from './lib/loadImage';
 
 function App() {
   const [inputValue, setInputValue] = useState('');
   const [imageURL, setImageURL] = useState('');
-  const [box, setBox] = useState({});
+  const [boxes, setBoxes] = useState([]);
+  const [message, setMessage] = useState(null);
+  const [isBusy, setIsBusy] = useState(false);
+
+  // Kept so boxes can be recomputed on resize without running detection again.
+  const detectionsRef = useRef([]);
+  const imageRef = useRef(null);
+  // Guards against a slow image finishing after the user picked a different one.
+  const requestRef = useRef(0);
 
   useEffect(() => {
-    // console.log('Current input value:', inputValue);
-  }, [inputValue])
+    loadModels().catch(() => {
+      setMessage({ tone: 'error', text: 'Could not load the face detection model. Try reloading the page.' });
+    });
+  }, []);
+
+  useEffect(() => {
+    const onResize = () => {
+      if (imageRef.current && detectionsRef.current.length) {
+        setBoxes(toBoxes(detectionsRef.current, imageRef.current));
+      }
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  const startNewImage = () => {
+    setBoxes([]);
+    setMessage(null);
+    detectionsRef.current = [];
+    // Clearing the src unmounts the <img>, so re-picking the same image still
+    // produces a fresh load event to hang detection off of.
+    setImageURL('');
+    return ++requestRef.current;
+  };
 
   const onInputChange = (event) => {
     setInputValue(event.target.value);
   };
 
-  const onSubmit = (value) => {
-      setBox({})
-      setImageURL(value);
+  const onSubmit = async (value) => {
+    if (!value) {
+      setMessage({ tone: 'error', text: 'Please insert the URL of an image' });
+      return;
+    }
 
-      if(value) {
-        fetch(`/api/clarifai?image_url=${value}`)
-        .then(response => response.json())
-        .then(data => calculateFaceLocation(data))
-        .catch(error => console.error('Error:', error));
-      } else {
-        alert("Please insert the URL of an image");
-      }
+    const request = startNewImage();
+    setIsBusy(true);
+
+    try {
+      const src = await resolveImageSrc(value);
+      if (request !== requestRef.current) return;
+      setImageURL(src);
+    } catch (error) {
+      if (request !== requestRef.current) return;
+      setImageURL('');
+      setIsBusy(false);
+      setMessage({ tone: 'error', text: error.message });
+    }
   };
 
   const onImageUpload = (file) => {
-      if (!file) return;
-      if (file.size > 2 * 1024 * 1024) {
-        alert("Please upload an image under 2MB.");
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const dataURL = e.target.result;
-        const base64 = dataURL.split(',')[1];
-        setBox({});
-        setImageURL(dataURL);
-        fetch('/api/clarifai/upload', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image_base64: base64 })
-        })
-        .then(response => response.json())
-        .then(data => calculateFaceLocation(data))
-        .catch(error => console.error('Error:', error));
-      };
-      reader.readAsDataURL(file);
-  };
-
-  const calculateFaceLocation = (data) => {
-    if (!data?.outputs?.[0]?.data?.regions?.[0]?.region_info?.bounding_box) {
-      alert("Unable to perform face detection at this time. Please try again later.");
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      setMessage({ tone: 'error', text: 'Please upload an image under 2MB.' });
       return;
     }
-    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
-    const image = document.getElementById("inputimage");
-    const width = Number(image.width);
-    const height = Number(image.height);
-    setBox({
-      leftCol: clarifaiFace.left_col * width,
-      topRow: clarifaiFace.top_row * height,
-      rightCol: width - clarifaiFace.right_col * width,
-      bottomRow: height - clarifaiFace.bottom_row * height,
-    });
-  }
+
+    const request = startNewImage();
+    setIsBusy(true);
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (request !== requestRef.current) return;
+      setImageURL(e.target.result);
+    };
+    reader.onerror = () => {
+      if (request !== requestRef.current) return;
+      setIsBusy(false);
+      setMessage({ tone: 'error', text: 'Could not read that file.' });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Detection waits for the image's own load event, so the element always has
+  // real dimensions to scale the boxes against.
+  const onImageLoad = useCallback(async (imageElement) => {
+    const request = requestRef.current;
+    imageRef.current = imageElement;
+
+    try {
+      await loadModels();
+      const detections = await detectFaces(imageElement);
+      if (request !== requestRef.current) return;
+
+      detectionsRef.current = detections;
+      setBoxes(toBoxes(detections, imageElement));
+
+      if (!detections.length) {
+        setMessage({ tone: 'info', text: 'No faces found in this image.' });
+      }
+    } catch (error) {
+      if (request !== requestRef.current) return;
+      setMessage({ tone: 'error', text: 'Something went wrong while detecting faces.' });
+    } finally {
+      if (request === requestRef.current) setIsBusy(false);
+    }
+  }, []);
+
+  // onLoad never fires for an image the browser can't decode, so the busy
+  // state needs releasing here too.
+  const onImageError = useCallback(() => {
+    setIsBusy(false);
+    setImageURL('');
+    setMessage({ tone: 'error', text: 'That image could not be displayed.' });
+  }, []);
 
   return (
     <div className="App min-h-screen">
@@ -83,6 +138,7 @@ function App() {
         inputValue={inputValue}
         onImageUpload={onImageUpload}
       />
+      <Message message={message} isBusy={isBusy} />
       <ImageSelection
         setInputValue={setInputValue}
         onSubmit={onSubmit}
@@ -90,7 +146,9 @@ function App() {
       />
       <FaceDetect
         imageURL={imageURL}
-        box={box}
+        boxes={boxes}
+        onImageLoad={onImageLoad}
+        onImageError={onImageError}
       />
     </div>
   );
